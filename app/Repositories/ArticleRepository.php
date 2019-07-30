@@ -2,9 +2,22 @@
 namespace App\Repositories;
 
 use App\Repositories\Contracts\RepositoryContract;
+use App\Services\CacheService;
 use App\Article;
 
 class ArticleRepository implements RepositoryContract {
+
+    protected $cache;
+
+    /**
+     * PostRepository constructor.
+     *
+     * @param CacheService $cache
+     */
+    public function __construct(CacheService $cache)
+    {
+        $this->cache = $cache;
+    }
     /**
      * Fetch an article by it's ID
      *
@@ -33,7 +46,7 @@ class ArticleRepository implements RepositoryContract {
      */
     public function delete($article_id)
     {
-        Article::destroy($article_id);
+        return Article::destroy($article_id);
     }
 
     /**
@@ -44,6 +57,6 @@ class ArticleRepository implements RepositoryContract {
      */
     public function update($article_id, array $article_data)
     {
-        Article::find($article_id)->update($article_data);
+        return Article::find($article_id)->update($article_data);
     }
 }

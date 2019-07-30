@@ -12,6 +12,6 @@ class Article extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'article_title', 'article_text', 'article_image'
+        'user_id', 'article_title', 'article_text', 'article_image',
     ];
 }
