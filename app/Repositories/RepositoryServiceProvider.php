@@ -15,7 +15,7 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(
             'App\Repositories\Contracts\RepositoryContract',
-            'App\Repositories\ArticleRepository'
+            'App\Repositories\ArticlesRepository'
         );
 
         $this->app->bind(

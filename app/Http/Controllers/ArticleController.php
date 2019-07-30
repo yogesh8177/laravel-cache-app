@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Repositories\Contracts\RepositoryContract;
-use App\Respositories\ArticleRepository;
+use Illuminate\Http\Request;
+use App\Repositories\ArticleRepository;
 
 class ArticleController extends Controller
 {
@@ -51,8 +50,8 @@ class ArticleController extends Controller
      * 
      * @return update result
      */
-    public function updateArticle($article_id, $article_data) {
-        $result = $this->article->update($article_id, $article_data);
+    public function updateArticle($article_id, Request $request) {
+        $result = $this->article->update($article_id, $request->input());
         return $result;
         //return view('articleDetails', $result);
     }

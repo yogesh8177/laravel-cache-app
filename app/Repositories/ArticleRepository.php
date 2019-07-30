@@ -10,7 +10,7 @@ class ArticleRepository implements RepositoryContract {
     protected $cache;
 
     /**
-     * PostRepository constructor.
+     * ArticleRepository constructor.
      *
      * @param CacheService $cache
      */
@@ -19,14 +19,26 @@ class ArticleRepository implements RepositoryContract {
         $this->cache = $cache;
     }
     /**
-     * Fetch an article by it's ID
+     * Fetches an article by it's ID
      *
      * @param int
      * @return collection
      */
     public function get($article_id)
     {
-        return Article::find($article_id);
+        $article = $this->cache->getEntity('article', $article_id);
+        if (!$article) {
+            $article = Article::find($article_id);
+            $cacheSetResult = $this->cache->setEntity('article', $article_id, $article);
+            $result['cache_hit'] = false;
+            $result['article'] = $article;
+            return $result;
+        }
+        else {
+            $result['cache_hit'] = true;
+            $result['article'] = json_decode($article);
+            return $result;
+        }
     }
 
     /**
@@ -57,6 +69,9 @@ class ArticleRepository implements RepositoryContract {
      */
     public function update($article_id, array $article_data)
     {
-        return Article::find($article_id)->update($article_data);
+        Article::find($article_id)->update($article_data);
+        $updatedPost = Article::find($article_id);
+        $this->cache->setEntity('article', $article_id, $updatedPost);
+        return $updatedPost;
     }
 }
