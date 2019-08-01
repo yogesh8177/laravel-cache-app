@@ -1,72 +1,55 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# Laravel cache app
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+This app uses redis as a cache to store posts, articles and users. For initial requests, as the cache remains empty, we make database calls to fetch the respective entities and put it into the cache. For the subsequent requests, we hit the cache instead of fetching results from database.
 
-## About Laravel
+# Architecture diagram
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+In our architecture we have the following components:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<img src="./diagrams/architecture-diagram.png">
 
-## Learning Laravel
+[ER-Diagram](./diagrams/architecture-diagram.png)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Api service
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1400 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+This service accepts the api requests and responds with a response. This service is written in Laravel.
 
-## Laravel Sponsors
+## MySQL
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+This service is our primary database service. We store `users`, `posts` and `articles`inside it.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
+## Redis cache
 
-## Contributing
+This service caches `users`, `posts` and `articles`. 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Project setup
 
-## Security Vulnerabilities
+1. Laravel app can be run by following the steps below:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Make sure you have mySQL instance up and running
+- Perform migration for tables to be worked upon by the command: `php artisan migrate`
+- Now once we have our tables created inside MySQL, lets seed some data by the command: `php artisan db:seed`
+- Finally run `php artisan serve` to run the development server
+- Use the apis to request any entity: GET `http://localhost:8000/api/${user or article or post}` to get data. The response contains a field called `cache_hit`. If `cache_hit` = `true`,  it means we have a response which took the data from our redis cache, if `cache_hit` = `false`, the the response was fetched by making a database call.
 
-## License
+## Code paths
 
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The code for seeding data can be found at: 
+1. `$PROJECT_ROOT/database/seeds`
+1. `$PROJECT_ROOT/database/seedsData`
+1. `$PROJECT_ROOT/database/migrations`
+
+Custom service provders registered at: `$PROJECT_ROOT/config/app.php` inside providers array.
+
+Controllers at: `$PROJECT_ROOT/app/Http/Controllers`;
+
+Repositories at: `$PROJECT_ROOT/app/Repositories`;
+
+The pattern used here is repository pattern. We have an abstraction for each entity i.e `users`, `articles` and `posts`. Repository classes do the database interaction. Repository implements a contract called `RepositoryContract`. This contract defines what each repository class that implements it should conform to do.
+
+Each repository also includes a `cache service` that is injected by the dependency injector. We are using a singleton cache service instance as of now as it is more tedious to connect to redis on every request. We will instead reuse the same cache service object on every request.
+
+
+
+
