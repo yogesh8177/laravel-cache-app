@@ -33,6 +33,11 @@ This service caches `users`, `posts` and `articles`.
 - Finally run `php artisan serve` to run the development server
 - Use the apis to request any entity: GET `http://localhost:8000/api/${user or article or post}` to get data. The response contains a field called `cache_hit`. If `cache_hit` = `true`,  it means we have a response which took the data from our redis cache, if `cache_hit` = `false`, the the response was fetched by making a database call.
 
+### Hybrid Dockerized setup
+
+1. Before running Laravel app, do `docker-compose up -d` to run `MySQL` and `Redis` instances.
+1. Run Laravel app `php artisan serve`;
+
 ## Code paths
 
 The code for seeding data can be found at: 
