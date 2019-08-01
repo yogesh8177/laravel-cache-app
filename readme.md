@@ -9,7 +9,7 @@ In our architecture we have the following components:
 
 <img src="./diagrams/architecture-diagram.png">
 
-[ER-Diagram](./diagrams/architecture-diagram.png)
+[Architecture-Diagram](./diagrams/architecture-diagram.png)
 
 ## Api service
 
