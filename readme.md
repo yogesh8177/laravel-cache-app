@@ -32,6 +32,7 @@ This service caches `users`, `posts` and `articles`.
 - Now once we have our tables created inside MySQL, lets seed some data by the command: `php artisan db:seed`
 - Finally run `php artisan serve` to run the development server
 - Use the apis to request any entity: GET `http://localhost:8000/api/${user or article or post}` to get data. The response contains a field called `cache_hit`. If `cache_hit` = `true`,  it means we have a response which took the data from our redis cache, if `cache_hit` = `false`, the the response was fetched by making a database call.
+- You can make a `PUT` request to perform update operation. During update, we make a database call to update the entity, the we update the cache in redis for the entity in question. This way, we have updated cache as well as primary database.
 
 ### Hybrid Dockerized setup
 
