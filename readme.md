@@ -36,7 +36,7 @@ This service caches `users`, `posts` and `articles`.
 ### Hybrid Dockerized setup
 
 1. Before running Laravel app, do `docker-compose up -d` to run `MySQL` and `Redis` instances.
-1. Run Laravel app `php artisan serve`;
+1. Run Laravel app `php artisan serve`.
 
 ## Code paths
 
