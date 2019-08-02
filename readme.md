@@ -52,6 +52,8 @@ Controllers at: `$PROJECT_ROOT/app/Http/Controllers`;
 
 Repositories at: `$PROJECT_ROOT/app/Repositories`;
 
+Services at: `$PROJECT_ROOT/app/Services`
+
 The pattern used here is repository pattern. We have an abstraction for each entity i.e `users`, `articles` and `posts`. Repository classes do the database interaction. Repository implements a contract called `RepositoryContract`. This contract defines what each repository class that implements it should conform to do.
 
 Each repository also includes a `cache service` that is injected by the dependency injector. We are using a singleton cache service instance as of now as it is more tedious to connect to redis on every request. We will instead reuse the same cache service object on every request.
