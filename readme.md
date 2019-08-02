@@ -58,6 +58,6 @@ The pattern used here is repository pattern. We have an abstraction for each ent
 
 Each repository also includes a `cache service` that is injected by the dependency injector. We are using a singleton cache service instance as of now as it is more tedious to connect to redis on every request. We will instead reuse the same cache service object on every request.
 
-
+> Note that for brevity, we are using a single redis instance, we can setup redis replication for high availability. 
 
 
